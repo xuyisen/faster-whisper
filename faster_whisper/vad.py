@@ -321,6 +321,9 @@ class SileroVADModel:
             audio.shape[0] % num_samples == 0
         ), "Input size should be a multiple of num_samples"
 
+        if audio.shape[0] == 0:
+            return np.empty((0, 1), dtype=np.float32)
+
         h = np.zeros((1, 1, 128), dtype="float32")
         c = np.zeros((1, 1, 128), dtype="float32")
         context = np.zeros(
@@ -345,6 +348,9 @@ class SileroVADModel:
                 {"input": batched_audio[i : i + encoder_batch_size], "h": h, "c": c},
             )
             outputs.append(output)
+
+        if len(outputs) == 0:
+            return np.empty((0, 1), dtype=np.float32)
 
         out = np.concatenate(outputs, axis=0)
 
